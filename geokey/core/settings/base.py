@@ -48,9 +48,9 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
     'rest_framework',
     'rest_framework_gis',
-    'social_django',
 
     # GeoKey apps
     'geokey.core',
@@ -76,7 +76,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'geokey.core.middleware.XsSharing',
     'geokey.core.middleware.RequestProvider',
-    'social_django.middleware.SocialAuthExceptionMiddleware',
 )
 
 # Settings for django-oauth-toolkit
@@ -112,10 +111,6 @@ MESSAGE_TAGS = {
 # Settings for django.contrib.auth, used for user authentication
 # see: https://docs.djangoproject.com/en/1.8/ref/settings/#auth
 AUTHENTICATION_BACKENDS = (
-    # 'social_core.backends.github.GithubOAuth2',
-    # 'social_core.backends.twitter.TwitterOAuth',
-    'social_core.backends.facebook.FacebookOAuth2',
-
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
     # `allauth` specific authentication methods, such as login by e-mail
@@ -145,7 +140,31 @@ ACCOUNT_FORMS = {
 }
 SOCIALACCOUNT_ADAPTER = 'geokey.core.adapters.SocialAccountAdapter'
 SOCIALACCOUNT_QUERY_EMAIL = True
-SOCIALACCOUNT_PROVIDERS = {}
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'verified',
+            'locale',
+            'timezone',
+            'link',
+            'gender',
+            'updated_time',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': 'path.to.callable',
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v2.5',
+    }
+}
 
 SITE_ROOT = dirname(dirname(dirname(abspath(__file__))))
 STATICFILES_DIRS = [normpath(join(SITE_ROOT, 'static'))]
@@ -168,8 +187,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'geokey.core.context_processors.project_settings',
                 'django.contrib.messages.context_processors.messages',
-                'social_django.context_processors.backends',
-                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -178,3 +195,4 @@ TEMPLATES = [
 # Custom GeoKey settings, enables video upload. Disabled by default, can be
 # endabled by overwriting in local settings
 ENABLE_VIDEO = False
+
