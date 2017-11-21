@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     'rest_framework',
     'rest_framework_gis',
+    'social_django',
 
     # GeoKey apps
     'geokey.core',
@@ -75,6 +76,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'geokey.core.middleware.XsSharing',
     'geokey.core.middleware.RequestProvider',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 )
 
 # Settings for django-oauth-toolkit
@@ -110,6 +112,10 @@ MESSAGE_TAGS = {
 # Settings for django.contrib.auth, used for user authentication
 # see: https://docs.djangoproject.com/en/1.8/ref/settings/#auth
 AUTHENTICATION_BACKENDS = (
+    # 'social_core.backends.github.GithubOAuth2',
+    # 'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.facebook.FacebookOAuth2',
+
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
     # `allauth` specific authentication methods, such as login by e-mail
@@ -161,7 +167,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'geokey.core.context_processors.project_settings',
-                'django.contrib.messages.context_processors.messages'
+                'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
