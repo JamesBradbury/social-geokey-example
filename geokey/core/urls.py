@@ -35,8 +35,15 @@ urlpatterns = [
         r'^$',
         RedirectView.as_view(url='/admin/', permanent=True)
     ),
+    url(
+        r'^accounts/',
+        include('allauth.urls')
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+LOGIN_REDIRECT_URL = 'home'
 
 if settings.DEBUG and settings.DEBUG_TOOLBAR:
     import debug_toolbar
